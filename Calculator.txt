@@ -1,0 +1,5 @@
+// Exemple d'utilisation
+echo calculator(10, 5, 'addition'); // Affiche 15
+echo calculator(10, 5, 'soustraction'); // Affiche 5
+echo calculator(10, 5, 'multiplication'); // Affiche 50
+echo calculator(10, 5, 'division'); // Affiche 2
