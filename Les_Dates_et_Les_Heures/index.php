@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les_Dates_et_Les_Heures</title>
+</head>
+<body>
+    
 <?php
 
 // date("d/m/Y");
@@ -60,7 +69,8 @@ echo "Numéro de semaine : " . $date->format("W") . "<br>";
 // echo "Le timestamp $timestamp correspond à la date : " . $date->format('d/m/Y H:i:s') . "<br>";
 
 
-
-
-
 ?>
+
+
+</body>
+</html>

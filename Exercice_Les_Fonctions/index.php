@@ -1,5 +1,13 @@
-<?php
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les_Fonctions_Exo_Calculator</title>
+</head>
+<body>
 
+<?php
 
 /*Exercice
 Ecrivez la fonction calculator() traitant les opérations d'addition, 
@@ -17,7 +25,7 @@ function calculator($x, $y, $operateurs) {
                 return $x / $y;
             } else {
                 return "Erreur: Division par zéro";
-            }
+            } 
         default:
             return "Erreur: Opération non valide";
     }
@@ -28,3 +36,6 @@ echo calculator(10, 5, 'multiplication')."<br>"; // Affiche 50
 echo calculator(10, 5, 'division'); // Affiche 2
 
 ?>
+    
+</body>
+</html>

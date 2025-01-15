@@ -1,4 +1,12 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les_Tableaux</title>
+</head>
+<body>
+    
 <?php
 /*Le tableau $a ci-dessous représente les plannings de groupes de stagiaires.
  Le code 19XXX représente le numéro de groupe.
@@ -46,3 +54,7 @@ $nombre_de_semaines_stage_19003 = count(array_keys($a["19003"], "Stage"));
 echo "Le stage du groupe 19003 dure : " . $nombre_de_semaines_stage_19003 . " semaines<br>";
 
 ?>
+
+
+</body>
+</html>
