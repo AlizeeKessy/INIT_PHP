@@ -10,5 +10,6 @@
 </head>
 <body class="p-3 m-0 border-0 bd-example m-0 border-0">
 
-
+<header>
   <div  class="text-white text-center mb-4" style="width: 60%; height: auto;"> <h1>LE FORMULAIRE BANCAIRE</h1> </div>
+</header>
