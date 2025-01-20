@@ -1,0 +1,8 @@
+CREATE DATABASE courspdo;
+USE courspdo;
+CREATE TABLE personne(
+num INT PRIMARY KEY AUTO_INCREMENT,
+nom VARCHAR(30),
+prenom VARCHAR(30)
+);
+
