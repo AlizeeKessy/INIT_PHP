@@ -1,55 +1,58 @@
-<?php include 'header.php' ?>
-<?php// Configuration de la base de données
-$host = '127.0.0.1';
-$dbname = 'thedistrict';
-$username = 'root';
-$password = '';try {
-    // Connexion à la base de données
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}// Vérification si l'utilisateur est déjà connecté
-if (isset($_SESSION['user_id'])) {
+<?php
+include './header.php'; // Véfifier si l'utilisateur est connecté
+if (isset($_SESSION['utilisateur_ID'])) {
+    var_dump($_SESSION['utilisateur_ID']); // Debug: Afficher l'ID de l'utilisateur
+    // exit('Utilisateur déjà connecté, redirection vers index.php'); // Debug: Message avant redirection
     header('Location: index.php'); // Redirection vers la page d'accueil si l'utilisateur est déjà connecté
     exit();
-}// Traitement de la soumission du formulaire d'inscription
+} // Traitement de la soumission du formulaire de connexion
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Récupération des données du formulaire en méthode POST
-    $login = $_POST['login'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];    $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE utilisateur_pseudo=:utilisateur_pseudo");
-    $stmt->bindValue(':utilisateur_pseudo', $login);
+    // Réception des données du formulaire en méthodes POST
+    $login = $_POST['email'];
+    $password = $_POST['password'];
+    // var_dump($login, $password);
+    $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE utilisateur_email = :login");
+    $stmt->bindValue(':login', $login);
     $stmt->execute();
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);    if ($user) {
-        // L'utilisateur existe déjà, affichage d'un message d'erreur
-        $error_message = "Ce login est déjà utilisé par un autre utilisateur.";
-    } else {
-        // Insertion de l'utilisateur dans la base de données
-        $password_hash = password_hash($password, PASSWORD_DEFAULT); // Hashage du mot de passe
-        $stmt = $pdo->prepare("INSERT INTO utilisateur (utilisateur_pseudo, utlisateur_email, utilisateur_password, type_ID)
-        VALUES (:utilisateur_pseudo, :email, :mot_de_passe, 2)"); //on force le type utilisateur à client
-        $stmt->bindValue(':utilisateur_pseudo', $login);
-        $stmt->bindValue(':email', $email);
-        $stmt->bindValue(':mot_de_passe', $password_hash);
-        $stmt->execute();        // Récupération de l'identifiant de l'utilisateur inséré
-        $user_id = $pdo->lastInsertId();        // Connexion automatique de l'utilisateur après son inscription
-        $_SESSION['utilisateur_ID'] = $user_id;        header('Location: index.php'); // Redirection vers la page d'accueil
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    // var_dump($user);
+    if ($user && password_verify($password, $user['utilisateur_password'])) {
+        // var_dump($user, $password);
+        // Connexion réussie, stocker les informations de l'utilisateur dans la variable session
+        $_SESSION['utilisateur_ID'] = $user['utilisateur_ID'];
+        // Récupère le type d'utilisateur pour renseigner la variable de session type_ID
+        $stmt = $pdo->prepare("SELECT * FROM type WHERE type_ID = :type_ID");
+        $stmt->bindValue(':type_ID', $user['type_ID']);
+        $stmt->execute();
+        $type = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Stocker les informations de type dans la session
+        $_SESSION['type_libelle'] = $type['type_libelle'];
+        echo "<br>Type d'utilisateur : " . $_SESSION['type_libelle'];
+        $_SESSION['logged_in'] = true;
+        header('Location: index.php'); // Redirection vers la page d'acceuil
         exit();
+    } else {
+        //Identifiants incorrects, affichage d'un message d'erreur
+        $error_message = "Email ou mot de passe incorrect";
     }
 }
-?>    <h1>Inscription</h1>
-    <?php if (isset($error_message)) : ?>
-        <p><?php echo $error_message; ?></p>
-    <?php endif; ?>
-    <form method="POST">
-        <label for="login">Votre Login :</label>
-        <input type="login" id="login" name="login" required><br>
-        <label for="email">Email :</label>
-        <input type="email" id="email" name="email" required><br>
-        <label for="password">Mot de passe :</label>
-        <input type="password" id="password" name="password" required><br>
-        <input type="submit" value="S'inscrire">
-    </form>
-    <p>Déjà inscrit ? <a href="login.php">Se connecter</a></p>
-<?php include 'footer.php' ?>
+?><div class="container-connexion">
+    <div class="login-box">
+        <h2 class="title-connexion">Connexion</h2>
+        <?php if (isset($error_message)) : ?>
+            <div class="alert alert-danger" role="alert">
+                <?= $error_message ?>
+            </div>
+        <?php endif; ?>
+        <form method="POST" class="form-connexion">
+            <div class="textbox">
+                <input type="text" name="email" placeholder="Email" class="input-connexion" autocomplete="on" required>
+            </div>
+            <br>
+            <div class="textbox">
+                <input type="password" name="password" placeholder="Mot de passe" class="input-connexion" required>
+            </div>
+            <p class="p-forget">Mot de passe oublié ? <a href="recup_mdp.php">Cliquez ici</a></p>
+            <br>
+            <input type="submit" class="btn-connexion" value="Se connecter">
+        </form>
