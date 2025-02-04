@@ -1,108 +1,164 @@
 <?php
 class Employe
 {
-    private  $Nom;
-    private  $Prenom;
-    private $DateEmbauche;
-    private  $Fonction;
-    private $Salaire;
-    private  $Service;
+    private $nom;
+    private $prenom;
+    private $dateEmbauche;
+    private $fonction;
+    private $salaire;
+    private $service;
     private $magasin; // Ajout de la propriété magasin
+    private $nbreEnfant;
+    private $enfants = [];
+    private $enfantAge;
 
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+    }
 
+    public function getNom()
+    {
+        return $this->nom;
+    }
 
-    public function setNom($Nom)
+    public function setPrenom($prenom)
     {
-        $this->Nom = $Nom;
+        $this->prenom = $prenom;
     }
-    public function setPrenom($Prenom)
+
+    public function getPrenom()
     {
-        $this->Prenom = $Prenom;
+        return $this->prenom;
     }
-    public function setDateEmbauche($DateEmbauche)
+
+    public function setDateEmbauche($dateEmbauche)
     {
-        $this->DateEmbauche = $DateEmbauche;
+        $this->dateEmbauche = $dateEmbauche;
     }
-    public function setFonction($Fonction)
+
+    public function getDateEmbauche()
     {
-        $this->Fonction = $Fonction;
+        return $this->dateEmbauche;
     }
-    public function setSalaire($Salaire)
+
+    public function setFonction($fonction)
     {
-        $this->Salaire = $Salaire;
+        $this->fonction = $fonction;
     }
-    public function setService($Service)
+
+    public function getFonction()
     {
-        $this->Service = $Service;
+        return $this->fonction;
     }
-    public function setMagasin($magasin) {
+
+    public function setSalaire($salaire)
+    {
+        $this->salaire = $salaire;
+    }
+
+    public function getSalaire()
+    {
+        return $this->salaire;
+    }
+
+    public function setService($service)
+    {
+        $this->service = $service;
+    }
+
+    public function getService()
+    {
+        return $this->service;
+    }
+
+    public function setMagasin($magasin)
+    {
         $this->magasin = $magasin;
+    }
+
+    public function getMagasin()
+    {
+        return $this->magasin;
+    }
+    public function setNbreEnfat($nbreEnfant)
+    {
+        $this->nbreEnfant = $nbreEnfant;
+    }
+
+    public function getNbreEnfant()
+    {
+        return $this->nbreEnfant;
+    }
+
+    public function addEnfant($nom, $enfantAge)
+    {
+        $this->enfants[] = ['nom' => $nom, 'age' => $enfantAge];
+    }
+
+    public function getEnfants()
+    {
+        return $this->enfants;
     }
 
     public function getAnciennete()
     {
-        $dateEmbauche = new DateTime($this->DateEmbauche);
+        $dateEmbauche = new DateTime($this->dateEmbauche);
         $dateActuelle = new DateTime();
         $interval = $dateActuelle->diff($dateEmbauche);
         return $interval->y;
     }
 
-    public function calculerPrime()
+    public function getModeRestauration()
     {
-        $salaireAnnuel = $this->Salaire * 12;
-        $primeSalaire = $salaireAnnuel * 0.05;
-        $primeAnciennete = $salaireAnnuel * 0.02 * $this->getAnciennete();
-        return $primeSalaire + $primeAnciennete;
-    }
-
-    public function verserPrime()
-    {
-        $dateActuelle = new DateTime();
-        $dateVersement = new DateTime($dateActuelle->format('Y') . '-11-30');
-        if ($dateActuelle->format('Y-m-d') == $dateVersement->format('Y-m-d')) {
-            $montantPrime = $this->calculerPrime();
-            echo "Ordre de transfert de $montantPrime € envoyé à la banque pour {$this->Nom} {$this->Prenom}.\n";
+        if ($this->magasin->getModeRestauration() == "Restaurant d'entreprise") {
+            return "Les employés peuvent manger au restaurant d'entreprise.";
         } else {
-            echo "Aujourd'hui n'est pas le jour de versement de la prime.\n";
+            return "Les employés ont droit à des tickets restaurants.";
         }
     }
-    public function __toString() {
-        // Calcul de l'ancienneté
-        $dateEmbauche = new DateTime($this->DateEmbauche);
-        $dateActuelle = new DateTime();
-        $interval = $dateActuelle->diff($dateEmbauche);
-        $anciennete = $interval->y;
-    
-        // Calcul de la prime (par exemple, 5% du salaire par année d'ancienneté)
-        $prime = $this->Salaire * 0.05 * $anciennete;
-    
-        // Versement de la prime (ajoutée au salaire)
-        $salaireAvecPrime = $this->Salaire + $prime;
-    
-        return "Nom: " . $this->Nom . 
-               ", Prénom: " . $this->Prenom . 
-               ", Date d'embauche: " . $this->DateEmbauche . 
-               ", Fonction: " . $this->Fonction . 
-               ", Salaire: " . $this->Salaire . 
-               ", Service: " . $this->Service . 
-               ", Ancienneté: " . $anciennete . " ans" . 
-               ", Prime: " . $prime . " euros" . 
-               ", Salaire avec prime: " . $salaireAvecPrime . " euros";
-               ", Magasin: " . $this->magasin->getNomMagasin();
+
+    public function getEstEligibleChequesVacances()
+    {
+        if ($this->getAnciennete() >= 1) {
+            return "est élégible aux chèques vacances";
+        } else {
+            return "n'est pas élégible aux chèques vacances";
+        }
     }
-    public function getNom() {
-        return $this->Nom;
+    public function getChequesNoel()
+    {
+        $cheques = ['20€' => 0, '30€' => 0, '50€' => 0];
+        foreach ($this->enfants as $enfant) {
+            if ($enfant['age'] >= 0 && $enfant['age'] <= 10) {
+                $cheques['20€']++;
+            } elseif ($enfant['age'] >= 11 && $enfant['age'] <= 15) {
+                $cheques['30€']++;
+            } elseif ($enfant['age'] >= 16 && $enfant['age'] <= 18) {
+                $cheques['50€']++;
+            }
+        }
+        return $cheques;
     }
-    
-    public function getPrenom() {
-        return $this->Prenom;
+
+    public function estEligibleChequesNoel()
+    {
+        return !empty($this->enfants);
     }
-    
-    public function getSalaire() {
-        return $this->Salaire;
-    }
-    
-    public function getMagasin() {
-        return $this->magasin;
+
+    public function __toString()
+    {
+        $chequesNoel = $this->getChequesNoel();
+        $chequesNoelStr = "20€: " . $chequesNoel['20€'] . ", 30€: " . $chequesNoel['30€'] . ", 50€: " . $chequesNoel['50€'];
+        return "Nom: " . $this->nom . "<br>" .
+            " Prénom: " . $this->prenom . "<br>" .
+            " Date d'embauche: " . $this->dateEmbauche . "<br>" .
+            " Fonction: " . $this->fonction . "<br>" .
+            " Salaire: " . $this->salaire . "<br>" .
+            " Service: " . $this->service . "<br>" .
+            " Magasin: " . $this->magasin->getNomMagasin() . "<br>" .
+            " Mode de restauration: " . $this->getModeRestauration() . "<br>" .
+            " Eligible aux chèques-vacances: " . ($this->getEstEligibleChequesVacances() ? "Oui" : "Non") . "<br>" .
+            " Chèques Noël: " . ($this->getChequesNoel() ? "Oui" : "Non");
     }
 }
